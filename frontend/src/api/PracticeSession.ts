@@ -1,4 +1,5 @@
-import { mockData } from "../mocks/seedData";
+import { idbGetAll } from "../services/db";
+import { seedPracticeSessions } from "../mocks/seedData";
 import type { PracticeSession } from "../types/PracticeSession";
 
 const endpoint = "/api/practice-session";
@@ -12,7 +13,8 @@ export async function listPracticeSession(): Promise<PracticeSession[]> {
       // Local mock fallback keeps the UI available during offline review.
     }
   }
-  return [...(mockData.practiceSession as unknown as PracticeSession[])];
+  const local = await idbGetAll("practiceSession");
+  return local.length ? local : structuredClone(seedPracticeSessions);
 }
 
 export async function savePracticeSession(payload: PracticeSession) {

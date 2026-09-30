@@ -1,4 +1,5 @@
-import { mockData } from "../mocks/seedData";
+import { idbGetAll } from "../services/db";
+import { seedBrailleSymbols } from "../mocks/seedData";
 import type { BrailleSymbol } from "../types/BrailleSymbol";
 
 const endpoint = "/api/braille-symbol";
@@ -12,7 +13,8 @@ export async function listBrailleSymbol(): Promise<BrailleSymbol[]> {
       // Local mock fallback keeps the UI available during offline review.
     }
   }
-  return [...(mockData.brailleSymbol as unknown as BrailleSymbol[])];
+  const local = await idbGetAll("brailleSymbol");
+  return local.length ? local : structuredClone(seedBrailleSymbols);
 }
 
 export async function saveBrailleSymbol(payload: BrailleSymbol) {

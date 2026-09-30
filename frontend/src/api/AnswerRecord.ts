@@ -1,4 +1,5 @@
-import { mockData } from "../mocks/seedData";
+import { idbGetAll } from "../services/db";
+import { seedAnswerRecords } from "../mocks/seedData";
 import type { AnswerRecord } from "../types/AnswerRecord";
 
 const endpoint = "/api/answer-record";
@@ -12,7 +13,8 @@ export async function listAnswerRecord(): Promise<AnswerRecord[]> {
       // Local mock fallback keeps the UI available during offline review.
     }
   }
-  return [...(mockData.answerRecord as unknown as AnswerRecord[])];
+  const local = await idbGetAll("answerRecord");
+  return local.length ? local : structuredClone(seedAnswerRecords);
 }
 
 export async function saveAnswerRecord(payload: AnswerRecord) {

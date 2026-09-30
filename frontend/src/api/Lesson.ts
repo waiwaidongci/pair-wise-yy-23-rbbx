@@ -1,4 +1,5 @@
-import { mockData } from "../mocks/seedData";
+import { idbGetAll } from "../services/db";
+import { seedLessons } from "../mocks/seedData";
 import type { Lesson } from "../types/Lesson";
 
 const endpoint = "/api/lesson";
@@ -12,7 +13,8 @@ export async function listLesson(): Promise<Lesson[]> {
       // Local mock fallback keeps the UI available during offline review.
     }
   }
-  return [...(mockData.lesson as unknown as Lesson[])];
+  const local = await idbGetAll("lesson");
+  return local.length ? local : structuredClone(seedLessons);
 }
 
 export async function saveLesson(payload: Lesson) {
